@@ -559,17 +559,15 @@ impl CFGR {
                 feature = "stm32f091",
                 feature = "stm32f098",
             ))]
-            match self.crs {
-                Some(crs) => {
-                    self.rcc.apb1enr.modify(|_, w| w.crsen().set_bit());
 
-                    // Initialize clock recovery
-                    // Set autotrim enabled.
-                    crs.cr.modify(|_, w| w.autotrimen().set_bit());
-                    // Enable CR
-                    crs.cr.modify(|_, w| w.cen().set_bit());
-                }
-                _ => {}
+            if let Some(crs) = self.crs {
+                self.rcc.apb1enr.modify(|_, w| w.crsen().set_bit());
+
+                // Initialize clock recovery
+                // Set autotrim enabled.
+                crs.cr.modify(|_, w| w.autotrimen().set_bit());
+                // Enable CR
+                crs.cr.modify(|_, w| w.cen().set_bit());
             }
 
             // use HSI as source

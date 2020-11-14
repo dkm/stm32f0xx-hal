@@ -75,6 +75,7 @@ pub struct SixteenBit;
 
 /// SPI error
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// Overrun occurred
     Overrun,
@@ -82,8 +83,6 @@ pub enum Error {
     ModeFault,
     /// CRC error
     Crc,
-    #[doc(hidden)]
-    _Extensible,
 }
 
 /// SPI abstraction
@@ -445,7 +444,7 @@ where
 
         for word in words.iter_mut() {
             nb::block!(self.check_send())?;
-            self.send_u8(word.clone());
+            self.send_u8(*word);
             nb::block!(self.check_read())?;
             *word = self.read_u8();
         }
@@ -522,7 +521,7 @@ where
 
         for word in words {
             nb::block!(self.check_send())?;
-            self.send_u16(word.clone());
+            self.send_u16(*word);
         }
 
         // Do one last status register check before continuing
